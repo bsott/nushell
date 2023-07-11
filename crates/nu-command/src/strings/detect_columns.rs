@@ -192,12 +192,9 @@ fn detect_columns(
                         Ok(r) => {
                             // `process_range()` returns `isize::MAX` if the range is open-ended,
                             // which is not ideal for us
-                            let end = if r.1 as usize > cols.len() {
-                                cols.len()
-                            } else {
-                                r.1 as usize
-                            };
-                            (r.0 as usize, end)
+                            let end = std::cmp::min(r.1 as usize, std::cmp::max(0, cols.len() - 1))
+                                as usize;
+                            (std::cmp::max(0, r.0) as usize, end)
                         }
                         Err(processing_error) => {
                             let err = processing_error("could not find range index", name_span);
