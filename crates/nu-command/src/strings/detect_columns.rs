@@ -81,6 +81,60 @@ impl Command for DetectColumns {
                 }),
             },
             Example {
+                description: "Combine columns",
+                example: "\"a b c\n1 2\n3 4 5\" | detect columns --combine-columns 1..2",
+                result: Some(Value::List {
+                    vals: vec![
+                        Value::Record {
+                            cols: vec!["column0".to_string(), "column1".to_string()],
+                            vals: vec![Value::test_string("1"), Value::test_string("2")],
+                            span,
+                        },
+                        Value::Record {
+                            cols: vec!["column0".to_string(), "column1".to_string()],
+                            vals: vec![Value::test_string("3"), Value::test_string("4 5")],
+                            span,
+                        },
+                    ],
+                    span,
+                }),
+            },
+            Example {
+                description: "Combine remaining columns",
+                example: "\"a b c d\n1 2 3\n4 5 6 7\" | detect columns --combine-columns 2..",
+                result: Some(Value::List {
+                    vals: vec![
+                        Value::Record {
+                            cols: vec![
+                                "column0".to_string(),
+                                "column1".to_string(),
+                                "column2".to_string(),
+                            ],
+                            vals: vec![
+                                Value::test_string("1"),
+                                Value::test_string("2"),
+                                Value::test_string("3"),
+                            ],
+                            span,
+                        },
+                        Value::Record {
+                            cols: vec![
+                                "column0".to_string(),
+                                "column1".to_string(),
+                                "column2".to_string(),
+                            ],
+                            vals: vec![
+                                Value::test_string("4"),
+                                Value::test_string("5"),
+                                Value::test_string("6 7"),
+                            ],
+                            span,
+                        },
+                    ],
+                    span,
+                }),
+            },
+            Example {
                 description: "Splits a multi-line string into columns with headers detected",
                 example: "$'c1 c2 c3(char nl)a b c' | detect columns",
                 result: None,
